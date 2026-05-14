@@ -1,7 +1,5 @@
 # WeatherAdaptive-Perception
-Weather-adaptive object detection based on YOLOv8 with gated feature fusion for autonomous driving（End to end depolyment）
-
-# WeatherAdaptive-Perception
+[🇨🇳 中文文档](README_CN.md)
 
 > Weather-adaptive object detection based on YOLOv8 with gated feature fusion for autonomous driving.
 
