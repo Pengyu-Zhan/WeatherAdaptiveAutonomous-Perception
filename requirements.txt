@@ -1,0 +1,22 @@
+# Core
+ultralytics>=8.0.0
+torch>=2.0.0
+torchvision>=0.15.0
+
+# CV & Image Processing
+opencv-python>=4.8.0
+Pillow>=9.0.0
+
+# Data & Visualization
+numpy>=1.24.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+pandas>=2.0.0
+
+# ONNX Export
+onnx>=1.14.0
+onnxruntime>=1.15.0
+
+# Utilities
+tqdm>=4.65.0
+PyYAML>=6.0

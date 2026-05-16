@@ -1,0 +1,21 @@
+# BDD100K Weather-Balanced Dataset Configuration
+# ================================================
+# 使用前请将 path 修改为你本地的数据集实际路径
+
+path: ./datasets/bdd100k_weather  # 数据集根目录（修改为你的实际路径）
+train: images/train               # 训练图像目录（相对于 path）
+val: images/val                   # 验证图像目录（相对于 path）
+
+# 类别信息（BDD100K 10类）
+nc: 10
+names:
+  - pedestrian
+  - rider
+  - car
+  - truck
+  - bus
+  - train
+  - motorcycle
+  - bicycle
+  - traffic light
+  - traffic sign
