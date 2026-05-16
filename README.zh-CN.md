@@ -209,3 +209,5 @@ WeatherAdaptive-Perception/
 ## 许可证
 
 本项目采用 [Apache License 2.0](LICENSE) 许可协议。
+
+`ultralytics_changes/` 目录下的代码基于 [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics) 修改，遵循其原始 [AGPL-3.0 协议](https://github.com/ultralytics/ultralytics/blob/main/LICENSE)。所有修改内容均在源文件中明确标注。

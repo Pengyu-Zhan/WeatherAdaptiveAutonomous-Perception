@@ -209,3 +209,5 @@ If you find this work useful, please consider citing:
 ## License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
+
+The code under `ultralytics_changes/` is derived from [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics) and remains subject to the original [AGPL-3.0 License](https://github.com/ultralytics/ultralytics/blob/main/LICENSE). All modifications are clearly marked within the source files.
