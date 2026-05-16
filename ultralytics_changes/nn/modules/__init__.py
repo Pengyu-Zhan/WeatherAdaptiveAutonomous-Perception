@@ -61,7 +61,6 @@ from .block import (
     TorchVision,
 )
 from .conv import (
-    CBAM,
     ChannelAttention,
     Concat,
     Conv,
@@ -109,7 +108,6 @@ __all__ = (
     "C2PSA",
     "C3",
     "C3TR",
-    "CBAM",
     "CIB",
     "DFL",
     "ELAN1",
@@ -183,8 +181,6 @@ __all__ = (
     "WeatherGatedConcat",
 )
 
-#CBAM注意力机制新增
-from .block import CBAM_My
 
 #专利——环境自适应模块添加
 from .block import EnvAdaptiveFusion, WeatherGatedConcat

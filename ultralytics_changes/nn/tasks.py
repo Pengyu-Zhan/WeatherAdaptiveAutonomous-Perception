@@ -1,4 +1,4 @@
-# CBAM_My# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
 import contextlib
 import pickle
@@ -11,7 +11,6 @@ import torch
 import torch.nn as nn
 
 from ultralytics.nn.autobackend import check_class_names
-from ultralytics.nn.modules.block import CBAM_My
 from ultralytics.nn.modules.block import EnvAdaptiveFusion, WeatherGatedConcat
 from ultralytics.nn.modules import (
     AIFI,
@@ -70,7 +69,6 @@ from ultralytics.nn.modules import (
     YOLOEDetect,
     YOLOESegment,
     v10Detect,
-    CBAM_My
 )
 from ultralytics.utils import DEFAULT_CFG_DICT, LOGGER, YAML, colorstr, emojis
 from ultralytics.utils.checks import check_requirements, check_suffix, check_yaml
@@ -1559,7 +1557,6 @@ def parse_model(d, ch, verbose=True):
             SCDown,
             C2fCIB,
             A2C2f,
-            CBAM_My
         }
     )
     repeat_modules = frozenset(  # modules with 'repeat' arguments
@@ -1628,11 +1625,6 @@ def parse_model(d, ch, verbose=True):
             c2 = args[1] if args[3] else args[1] * 4
         elif m is torch.nn.BatchNorm2d:
             args = [ch[f]]
-        #--------------------------NEW--------------------------------
-        elif m is CBAM_My:
-            c1, c2 = ch[f], ch[f]  # 强制输出通道 c2 等于输入通道 c1
-            args = [c1, *args]  # 将 c1 传给 block.py 里的类
-        # ------------------------------------------------------------
 
         # --------------------------专利新增--------------------------
         elif m is getattr(torch.nn.modules, 'EnvAdaptiveFusion', None) or m.__name__ == 'EnvAdaptiveFusion':
