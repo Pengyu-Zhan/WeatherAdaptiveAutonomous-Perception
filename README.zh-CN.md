@@ -1,4 +1,4 @@
-# WeatherAdaptive-Perception
+# WeatherAdaptiveAutonomous-Perception
 [🇬🇧 English](README.md)
 > 基于 YOLOv8 的天气自适应目标检测框架，采用门控特征融合机制，面向自动驾驶场景。
 
@@ -7,7 +7,7 @@
 
 ## 简介
 
-WeatherAdaptive-Perception 是一个基于 [YOLOv8](https://github.com/ultralytics/ultralytics) 构建的天气感知目标检测框架。核心贡献为 **EnvAdaptiveFusion** 模块——一种轻量级门控机制，能够根据实时天气条件（晴天、雨天、雾天、雪天、阴天）动态调整多尺度特征融合策略。
+WeatherAdaptiveAutonomous-Perception 是一个基于 [YOLOv8](https://github.com/ultralytics/ultralytics) 构建的天气感知目标检测框架。核心贡献为 **EnvAdaptiveFusion** 模块——一种轻量级门控机制，能够根据实时天气条件（晴天、雨天、雾天、雪天、阴天）动态调整多尺度特征融合策略。
 
 系统在 FPN Neck 的跳跃连接处（P3/P4/P5）嵌入 **WeatherGatedConcat** 机制，由天气分类分支生成逐层级的门控值，在特征拼接前对 Backbone 特征与 Neck 特征的融合比例进行自适应调制。
 
