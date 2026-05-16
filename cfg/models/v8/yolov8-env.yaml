@@ -1,0 +1,103 @@
+# nc: 10 # number of classes (必须和 dataset.yaml 严格一致)
+# scales:
+#   n: [0.33, 0.25, 1024]
+#   s: [0.33, 0.50, 1024]
+#   m: [0.67, 0.75, 768]
+#   l: [1.00, 1.00, 512]
+#   x: [1.00, 1.25, 512]
+
+# # YOLOv8.0n backbone
+# backbone:
+#   # [from, repeats, module, args]
+#   - [-1, 1, Conv, [64, 3, 2]]  # 0-P1/2
+#   - [-1, 1, Conv, [128, 3, 2]] # 1-P2/4
+#   - [-1, 3, C2f, [128, True]]  # 2
+#   - [-1, 1, Conv, [256, 3, 2]] # 3-P3/8
+#   - [-1, 6, C2f, [256, True]]  # 4 (保存给后面的 P3 用)
+#   - [-1, 1, Conv, [512, 3, 2]] # 5-P4/16
+#   - [-1, 6, C2f, [512, True]]  # 6 (保存给后面的 P4 用)
+#   - [-1, 1, Conv, [1024, 3, 2]]# 7-P5/32
+#   - [-1, 3, C2f, [1024, True]] # 8
+
+#   # === 植入专利环境自适应模块 ===
+#   - [-1, 1, EnvAdaptiveFusion, []] # 9 (导致后续全部 +1)
+#   # ==============================
+
+#   - [-1, 1, SPPF, [1024, 5]]   # 10 (原版是 9，现在变 10)
+
+# # YOLOv8.0n head
+# head:
+#   - [-1, 1, nn.Upsample, [None, 2, "nearest"]] # 11
+#   - [[-1, 6], 1, Concat, [1]]  # 12 (cat backbone P4, 6没受影响)
+#   - [-1, 3, C2f, [512]]        # 13 (这是 Head P4 特征)
+
+#   - [-1, 1, nn.Upsample, [None, 2, "nearest"]] # 14
+#   - [[-1, 4], 1, Concat, [1]]  # 15 (cat backbone P3, 4没受影响)
+#   - [-1, 3, C2f, [256]]        # 16 (修正：这是 Detect P3/8-small)
+
+#   - [-1, 1, Conv, [256, 3, 2]] # 17
+#   - [[-1, 13], 1, Concat, [1]] # 18 (修正：原为12，现改为与13层的C2f拼接)
+#   - [-1, 3, C2f, [512]]        # 19 (修正：这是 Detect P4/16-medium)
+
+#   - [-1, 1, Conv, [512, 3, 2]] # 20
+#   - [[-1, 10], 1, Concat, [1]] # 21 (修正：原为10正确，因为SPPF变成了10)
+#   - [-1, 3, C2f, [1024]]       # 22 (修正：这是 Detect P5/32-large)
+
+#   - [[16, 19, 22], 1, Detect, [nc]] # 23 (致命修正：接在三个 C2f 特征层上！)
+
+# YOLOv8-env 环境自适应动态跳连网络
+# 改动点：
+#   1. backbone layer 9: EnvAdaptiveFusion（生成 P3/P4/P5 三组门控）
+#   2. head layer 12: WeatherGatedConcat（P4 跳连天气门控）
+#   3. head layer 15: WeatherGatedConcat（P3 跳连天气门控）
+
+nc: 10
+scales:
+  n: [0.33, 0.25, 1024]
+  s: [0.33, 0.50, 1024]
+  m: [0.67, 0.75, 768]
+  l: [1.00, 1.00, 512]
+  x: [1.00, 1.25, 512]
+
+# YOLOv8.0n backbone
+backbone:
+  - [-1, 1, Conv, [64, 3, 2]]        # 0-P1/2
+  - [-1, 1, Conv, [128, 3, 2]]       # 1-P2/4
+  - [-1, 3, C2f, [128, True]]        # 2
+  - [-1, 1, Conv, [256, 3, 2]]       # 3-P3/8
+  - [-1, 6, C2f, [256, True]]        # 4  ← P3 特征（跳连到 neck）
+  - [-1, 1, Conv, [512, 3, 2]]       # 5-P4/16
+  - [-1, 6, C2f, [512, True]]        # 6  ← P4 特征（跳连到 neck）
+  - [-1, 1, Conv, [1024, 3, 2]]      # 7-P5/32
+  - [-1, 3, C2f, [1024, True]]       # 8  ← P5 特征
+
+  # === 环境自适应模块：生成 P3/P4/P5 三组天气门控 ===
+  - [-1, 1, EnvAdaptiveFusion, []]    # 9  （对 P5 做缩放，同时缓存 P3/P4 门控）
+
+  - [-1, 1, SPPF, [1024, 5]]         # 10
+
+# YOLOv8.0n head
+head:
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]       # 11
+
+  # ★ P4 跳连：用 WeatherGatedConcat 替代 Concat，根据天气调节 backbone P4 的贡献
+  - [[-1, 6], 1, WeatherGatedConcat, [1, "p4"]]       # 12
+
+  - [-1, 3, C2f, [512]]                               # 13
+
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]       # 14
+
+  # ★ P3 跳连：用 WeatherGatedConcat 替代 Concat，根据天气调节 backbone P3 的贡献
+  - [[-1, 4], 1, WeatherGatedConcat, [1, "p3"]]       # 15
+
+  - [-1, 3, C2f, [256]]                               # 16
+
+  - [-1, 1, Conv, [256, 3, 2]]                        # 17
+  - [[-1, 13], 1, Concat, [1]]                        # 18  ← 这条是 head 内部拼接，不需要门控
+  - [-1, 3, C2f, [512]]                               # 19
+
+  - [-1, 1, Conv, [512, 3, 2]]                        # 20
+  - [[-1, 10], 1, Concat, [1]]                        # 21  ← head 内部拼接
+  - [-1, 3, C2f, [1024]]                              # 22
+
+  - [[16, 19, 22], 1, Detect, [nc]]                   # 23
